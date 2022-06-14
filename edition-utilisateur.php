@@ -1,10 +1,9 @@
 <?php
 include('headers.php');
 include('connexion.php');
-
 $json = $_POST['utilisateur'];
 $data = json_decode($json);
-//uploads des image dans le dossier uplods 
+//uploads des image dans le dossier uploads 
 if (isset($_FILES) && isset($_FILES['image'])) {
     $pathParts = pathinfo($_FILES['image']['name']);
     $nomImage = 'avatar-' . uniqid() . '.' . $pathParts['extension'];
