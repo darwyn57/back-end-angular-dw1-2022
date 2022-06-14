@@ -4,6 +4,8 @@ include('connexion.php');
 $json = $_POST['utilisateur'];
 $data = json_decode($json);
 //uploads des image dans le dossier uploads 
+$nomImage = null;
+
 if (isset($_FILES) && isset($_FILES['image'])) {
     $pathParts = pathinfo($_FILES['image']['name']);
     $nomImage = 'avatar-' . uniqid() . '.' . $pathParts['extension'];
@@ -29,23 +31,41 @@ if (!isset($data->id) || $data->id == null) {
     ]);
 } else {
     //si c'est une modification utilisateur
-    $requete = $connexion->prepare(
-        "UPDATE utilisateur 
+    if ($nomImage) {
+        $requete = $connexion->prepare(
+            "UPDATE utilisateur 
          SET prenom = :prenom,
              nom = :nom,
              image = :image,
              mot_de_passe = :mot_de_passe
-         WHERE id = :id"
-    );
+            WHERE id = :id"
+        );
 
-    $requete->execute([
-        ":prenom" => $data->prenom,
-        ":nom" => $data->nom,
-        ":image" => $nomImage,
-        ":mot_de_passe" => $data->mot_de_passe,
-        ":id" => $data->id
-    ]);
+        $requete->execute([
+            ":prenom" => $data->prenom,
+            ":nom" => $data->nom,
+            ":image" => $nomImage,
+            ":mot_de_passe" => $data->mot_de_passe,
+            ":id" => $data->id
+        ]);
+    } else {
+        $requete = $connexion->prepare(
+            "UPDATE utilisateur 
+             SET prenom = :prenom,
+                 nom = :nom,                 
+                 mot_de_passe = :mot_de_passe
+                WHERE id = :id"
+        );
+
+        $requete->execute([
+            ":prenom" => $data->prenom,
+            ":nom" => $data->nom,
+            ":mot_de_passe" => $data->mot_de_passe,
+            ":id" => $data->id
+        ]);
+    }
 }
+    
 
 // var_dump($_FILES);
 
